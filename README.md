@@ -5,36 +5,36 @@ The entire control loop — sensor protocol, preprocessing, error computation,
 PID and step generation — runs in the PL. The CPU parameterizes and observes
 it, but never sits inside the loop.
 
-```
-   ┌──────────────────────── PL (hardware) ─────────────────────────┐
-   │                                                                │
-   │  BNO055 ──SPI──► bno055_txn ──► bno055_seq ──► imu_preproc     │
-   │  (mode 3)        packet         startup +      bytes→int16,    │
-   │                  protocol       100 Hz burst   EMA filter      │
-   │                                                     │          │
-   │                                                     ▼          │
-   │                                                 quat_err       │
-   │                    q_setpoint ─────────────►  e = -2·sgn(w)·   │
-   │                                               vec(q̄_sp ⊗ q_m)  │
-   │                                                     │          │
-   │                                        ┌────────────┼──────────┤
-   │                                        ▼            ▼          ▼
-   │                                    pid_axis     pid_axis   pid_axis
-   │                                      (X)          (Y)        (Z)
-   │                                        │            │          │
-   │                                        ▼            ▼          ▼
-   │                                   stepper_drv  stepper_drv stepper_drv
-   │                                    STEP/DIR     STEP/DIR    STEP/DIR
-   │                                        │            │          │
-   └────────────────────────────────────────┼────────────┼──────────┼──┘
-                     ▲                      ▼            ▼          ▼
-              AXI4-Lite register file    motor 0      motor 1    motor 2
-                     ▲                   (roll/X)    (pitch/Y)   (yaw/Z)
-                     │
-   ┌─────────────────┴──── PS (software, Cortex-A53) ───────────────┐
-   │  gimbal_ctrl.c  driver: quaternions, fixed point, registers    │
-   │  shell.c        command line on the serial console             │
-   └────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    BNO["BNO055 (mode 3)"] -- SPI --> TXN
+
+    subgraph PL["PL (hardware)"]
+        direction TB
+        TXN["bno055_txn<br/>packet protocol"]
+        TXN --> SEQ["bno055_seq<br/>startup + 100 Hz burst"]
+        SEQ --> PRE["imu_preproc<br/>bytes→int16, EMA filter"]
+        PRE --> ERR["quat_err<br/>e = −2·sgn(w)·vec(q̄_sp ⊗ q_m)"]
+        SP["q_setpoint"] --> ERR
+        ERR --> PIDX["pid_axis (X)"]
+        ERR --> PIDY["pid_axis (Y)"]
+        ERR --> PIDZ["pid_axis (Z)"]
+        PIDX --> DRVX["stepper_drv<br/>STEP/DIR"]
+        PIDY --> DRVY["stepper_drv<br/>STEP/DIR"]
+        PIDZ --> DRVZ["stepper_drv<br/>STEP/DIR"]
+    end
+
+    DRVX --> M0["motor 0 (roll/X)"]
+    DRVY --> M1["motor 1 (pitch/Y)"]
+    DRVZ --> M2["motor 2 (yaw/Z)"]
+
+    subgraph PS["PS (software, Cortex-A53)"]
+        direction TB
+        CTRL["gimbal_ctrl.c<br/>driver: quaternions, fixed point, registers"]
+        SHELL["shell.c<br/>command line on the serial console"]
+    end
+
+    PL <-->|AXI4-Lite| PS
 ```
 
 ## Features
