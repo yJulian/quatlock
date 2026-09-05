@@ -337,3 +337,7 @@ the RTL against a model of the sensor protocol; where the BNO055 datasheet is
 thin on SPI details — response latency and chip-select behaviour between
 request and response — the model follows common practice, and those assumptions
 can only be confirmed against a real device.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
