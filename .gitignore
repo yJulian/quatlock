@@ -1,0 +1,78 @@
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+# Everything the scripts generate lands here: Vivado project, xsim snapshots,
+# the exported XSA and the Vitis workspace.
+build/
+
+# ---------------------------------------------------------------------------
+# Vivado
+# ---------------------------------------------------------------------------
+*.jou
+*.log
+*.str
+*.rpt
+*.xpr
+*.bit
+*.bin
+*.ltx
+*.xsa
+.Xil/
+NA/
+vivado_pid*.str
+vivado*.backup.jou
+vivado*.backup.log
+hs_err_pid*.log
+.cache/
+.gen/
+.srcs/
+.runs/
+.sim/
+.ip_user_files/
+.hw/
+.sdk/
+
+# ---------------------------------------------------------------------------
+# Vitis / XSCT
+# ---------------------------------------------------------------------------
+.metadata/
+.analytics
+_ide/
+vitis-*.log
+*.elf
+RemoteSystemsTempFiles/
+
+# ---------------------------------------------------------------------------
+# Simulation (xsim)
+# ---------------------------------------------------------------------------
+xsim.dir/
+xvlog.pb
+xelab.pb
+xsim*.jou
+xsim*.log
+webtalk*.jou
+webtalk*.log
+*.wdb
+*.wcfg
+*.pb
+*.vcd
+
+# ---------------------------------------------------------------------------
+# Host test binaries
+# ---------------------------------------------------------------------------
+test_driver
+test_driver.exe
+*.o
+*.obj
+*.exe
+
+# ---------------------------------------------------------------------------
+# Editors and operating system
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+Thumbs.db
+desktop.ini
+.DS_Store
